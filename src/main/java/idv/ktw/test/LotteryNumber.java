@@ -1,9 +1,13 @@
 package idv.ktw.test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import idv.ktw.test.MyNumber.IllegalDuplicateException;
 
 public class LotteryNumber {
 	private String no;
@@ -48,13 +52,21 @@ public class LotteryNumber {
 		for(int i = 0; i < this.number.size(); i++) {
 			if (this.number.get(i) > 49 || this.number.get(i) < 1) throw new IllegalNumberException(); 
 		}
+		
+		Set<Integer> s = new HashSet<Integer>();
+		for(Integer value: this.number) {
+			if (s.contains(value)) throw new IllegalDuplicateException();
+			s.add(value);
+		}
 	}
 	
 	private void checkSpecialNumber() {
 		if (this.specialNumber > 49 || this.specialNumber < 1) throw new IllegalSpecialNumberException();
+		if (this.number.contains(this.specialNumber)) throw new IllegalDuplicateException();
 	}
 	
 	class IllegalNoException extends RuntimeException {}
 	class IllegalNumberException extends RuntimeException {}
 	class IllegalSpecialNumberException extends RuntimeException {}
+	class IllegalDuplicateException extends RuntimeException{}
 }

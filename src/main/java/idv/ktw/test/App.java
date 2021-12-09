@@ -28,8 +28,8 @@ public class App
     		String inputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_invalid.json";
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
     		
-    		Map<String, Object> resultMarshall = unmarshall(inputPath);
-    		List<RewardResult> resultCheckReward = checkReward(resultMarshall);
+    		Map<String, Object> resultUnmarshall = unmarshall(inputPath);
+    		List<RewardResult> resultCheckReward = checkReward(resultUnmarshall);
     		marshall(outputPath, resultCheckReward);
     	}
     	catch (IOException e) {
@@ -67,6 +67,9 @@ public class App
 			}
 		}
 		
+		App appInstance = new App();
+		if(listMyNumbers.size() != listLotteryNumbers.size()) throw appInstance.new IllegalLengthNotMatchException();
+		
 		result.put("MyNumbers", listMyNumbers);
 		result.put("LotteryNumbers", listLotteryNumbers);
 		
@@ -77,8 +80,7 @@ public class App
     	List<MyNumber> myNumbers = (List<MyNumber>) result.get("MyNumbers");
     	List<LotteryNumber> lotteryNumbers = (List<LotteryNumber>) result.get("LotteryNumbers");
     	List<RewardResult> myRewards = new ArrayList<RewardResult>();
-    	
-    	// Follow Up: is there a chance that length aren't the same? 
+    	 
     	for(int i = 0; i < myNumbers.size(); i++) {
     		RewardResult temp = checkEachReward(myNumbers.get(i), lotteryNumbers.get(i));
     		myRewards.add(temp);
@@ -115,4 +117,6 @@ public class App
     	
     	objectMapper.writeValue(new File(path), rewards);
     }
+    
+    class IllegalLengthNotMatchException extends RuntimeException {}
 }
