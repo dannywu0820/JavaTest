@@ -4,6 +4,7 @@ public class InterfacePractice {
 	public static void main() {
 		testPolymorphism();
 		testBird();
+		testSwimPlayer();
 	}
 	
 	private static void testPolymorphism() {
@@ -22,6 +23,12 @@ public class InterfacePractice {
 		Bird b = new Bird();
 		b.swim();
 		b.fly();
+	}
+	
+	private static void testSwimPlayer() {
+		SwimPlayer p = new SwimPlayer();
+		p.swimBreaststroke();
+		p.swimButterflyStroke();;
 	}
 	
 	// Polymorphism in Inheritance
@@ -48,6 +55,14 @@ interface Swimmable {
 	public abstract void swim();
 } 
 
+interface Breaststroke extends Swimmable {
+	public abstract void swimBreaststroke();
+}
+
+interface ButterflyStroke extends Swimmable {
+	public abstract void swimButterflyStroke();
+}
+
 interface Flyable {
 	public abstract void fly();
 }
@@ -55,6 +70,20 @@ interface Flyable {
 class Human implements Swimmable {
 	public void swim() {
 		System.out.println("Human Swim.");
+	}
+}
+
+class SwimPlayer implements Breaststroke, ButterflyStroke {
+	public void swim() {
+		System.out.printf("%s Swim.%n", this.getClass().getName());
+	}
+	
+	public void swimBreaststroke() {
+		System.out.printf("%s SwimBreaststroke.%n", this.getClass().getName());
+	}
+	
+	public void swimButterflyStroke() {
+		System.out.printf("%s SwimButterflyStroke.%n", this.getClass().getName());
 	}
 }
 
