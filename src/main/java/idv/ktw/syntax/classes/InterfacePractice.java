@@ -3,6 +3,7 @@ package idv.ktw.syntax.classes;
 public class InterfacePractice {
 	public static void main() {
 		testPolymorphism();
+		testBird();
 	}
 	
 	private static void testPolymorphism() {
@@ -12,9 +13,15 @@ public class InterfacePractice {
 		// Shark shark = swimmer2;
 		Shark shark = (Shark) swimmer2;
 		Fish fish = (Fish) swimmer2;
-		Fish fish2 = (Fish) swimmer1;
+		// Fish fish2 = (Fish) swimmer1; // java.lang.ClassCastException
 		fish.swim();
-		//fish2.swim(); // java.lang.ClassCastException
+		//fish2.swim();
+	}
+	
+	private static void testBird() {
+		Bird b = new Bird();
+		b.swim();
+		b.fly();
 	}
 	
 	// Polymorphism in Inheritance
@@ -41,6 +48,10 @@ interface Swimmable {
 	public abstract void swim();
 } 
 
+interface Flyable {
+	public abstract void fly();
+}
+
 class Human implements Swimmable {
 	public void swim() {
 		System.out.println("Human Swim.");
@@ -61,5 +72,15 @@ class Shark extends Fish {
 class Submarine implements Swimmable {
 	public void swim() {
 		System.out.println("Submarine Swim.");
+	}
+}
+
+class Bird implements Swimmable, Flyable {
+	public void swim() {
+		System.out.printf("%s Swim.%n", this.getClass().getName());
+	}
+	
+	public void fly() {
+		System.out.printf("%s Fly.%n", this.getClass().getName());
 	}
 }
