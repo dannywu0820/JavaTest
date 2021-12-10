@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import idv.ktw.syntax.classes.ClassPractice3;
 import idv.ktw.syntax.classes.InterfacePractice;
 
 /**
@@ -27,6 +28,7 @@ public class App
     public static void main( String[] args )
     {   
     	InterfacePractice.main();
+    	ClassPractice3.main();
     	
     	try {
     		String inputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery.json";
