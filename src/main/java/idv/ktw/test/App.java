@@ -16,16 +16,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     public static void main( String[] args )
     {   
     	try {
-    		String inputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_invalid.json";
+    		String inputPath = ".\\src\\main\\java\\idv\\ktw\\test\\big_lottery.json";
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
     		
     		Map<String, Object> resultUnmarshall = unmarshall(inputPath);
@@ -54,7 +50,6 @@ public class App
 		if (myNumbers.isArray()) {
 			for(JsonNode n: myNumbers) {
 				MyNumber temp = new MyNumber(n);
-				// System.out.printf("%s: %s%n", temp.number, temp.getClass().getName());
 				listMyNumbers.add(temp);
 			}
 		}
@@ -62,7 +57,6 @@ public class App
 		if (lotteryNumbers.isArray()) {
 			for(JsonNode n: lotteryNumbers) {
 				LotteryNumber temp = new LotteryNumber(n);
-				// System.out.printf("%s%n", temp.toString());
 				listLotteryNumbers.add(temp);
 			}
 		}
