@@ -21,7 +21,7 @@ public class App
     public static void main( String[] args )
     {   
     	try {
-    		String inputPath = ".\\src\\main\\java\\idv\\ktw\\test\\big_lottery.json";
+    		String inputPath = ".\\src\\main\\java\\idv\\ktw\\test\\big_lottery_invalid.json";
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
     		
     		Map<String, Object> resultUnmarshall = unmarshall(inputPath);

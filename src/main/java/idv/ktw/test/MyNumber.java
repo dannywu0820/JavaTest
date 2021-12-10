@@ -32,8 +32,11 @@ class MyNumber {
 	}
 	
 	private void checkNumber() {
-		for(int i = 0; i < this.number.size(); i++) {
-			if (this.number.get(i) > 49 || this.number.get(i) < 1) throw new IllegalNumberException(); 
+		int size = this.number.size();
+		if (size != 6) throw new IllegalNumberException(); 
+		
+		for(int i = 0; i < size; i++) {
+			if (this.number.get(i) > 49 || this.number.get(i) < 1) throw new IllegalNumberException();  
 		}
 		
 		Set<Integer> s = new HashSet<Integer>();
