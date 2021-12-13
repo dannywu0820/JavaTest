@@ -1,7 +1,7 @@
 package idv.ktw.syntax.classes;
 
 public class ClassPractice {
-	public static void main() {
+	public static void main(String[] args) {
 		demoInheritance();
 		demoPolymorphism();
 	}

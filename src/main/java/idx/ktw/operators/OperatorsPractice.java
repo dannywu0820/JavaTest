@@ -29,11 +29,6 @@ public class OperatorsPractice {
         int[] ary2 = {10};
         System.out.printf("ary1 == ary2 %b%n", (ary1 == ary2));
         System.out.printf("ary1.equals(ary2) %b%n", (ary1.equals(ary2)));
-        
-        ArrayPractice.main();
-        StringPractice.main();
-        ClassPractice.main();
-        ClassPractice2.main();
 	}
 }
 
