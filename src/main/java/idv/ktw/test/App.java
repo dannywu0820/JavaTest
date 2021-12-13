@@ -27,9 +27,6 @@ public class App
 {
     public static void main( String[] args )
     {   
-    	InterfacePractice.main();
-    	ClassPractice3.main();
-    	
     	try {
     		String inputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery.json";
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
