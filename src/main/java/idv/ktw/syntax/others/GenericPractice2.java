@@ -36,5 +36,17 @@ class CollectionGeneric <T extends Collection> {
 	
 	public void show() {
 		System.out.println(this.collection.getClass().getName());
-	}
+	}	
 }
+
+//multiple-bounded generics
+class MyClass {}
+interface MyInterface {}
+
+class BoundedGeneric1 <T extends MyClass> {};
+class BoundedGeneric2 <T extends MyInterface> {};
+class BoundedGeneric3 <T extends MyClass & MyInterface> {};
+//class BoundedGeneric4 <T extends MyInterface & MyClass> {}; // classes before interfaces
+
+//class Kls <T extends Number & Comparable>
+//public class Some<T extends Iterable<T> & Comparable<T>>
