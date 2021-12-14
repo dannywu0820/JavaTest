@@ -112,3 +112,21 @@ class ReversedStringOrder implements Comparator<String> {
         return -s1.compareTo(s2);
     }
 }
+
+//define generic classes to implement generic interfaces
+abstract class InfoImle2<T> implements Info<T> {}
+class InfoImle3<U, V, T> implements Info<T> {
+	private U u;
+	private V v;
+	private T t;
+	
+	@Override
+	public T getInfo() {
+		return this.t;
+	}
+	
+	@Override
+	public void setInfo(T info) {
+		this.t = info;
+	}
+}
