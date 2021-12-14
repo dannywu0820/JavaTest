@@ -1,10 +1,12 @@
 package idv.ktw.syntax.others;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class GenericPractice {
 	public static void main(String[] args) {
 		demoGenericClasses();
+		demoGenericInterfaces();
 	}
 	
 	static void demoGenericClasses() {
@@ -15,6 +17,17 @@ public class GenericPractice {
 		MyCollection<Integer> ary = new MyCollection<Integer>();
 		ary.add(1);
 		//ary.add("str"); // can identify wrong type during compile time
+	}
+	
+	static void demoGenericInterfaces() {
+		InfoImpl ele = new InfoImpl("str");
+		System.out.println(ele.getInfo());
+		
+		String[] words = {"B", "X", "A", "M", "F", "W", "O"};
+        Arrays.sort(words, new ReversedStringOrder());
+        for(String word : words) {
+            System.out.println(word);
+        }
 	}
 }
 
@@ -63,4 +76,39 @@ class MyNumber<N> {}
 class Map<K, V> {
 	private K key;
 	private V value;
+}
+
+//generic interfaces
+interface Info<T> {
+	public abstract T getInfo();
+	public abstract void setInfo(T info);
+}
+
+class InfoImpl implements Info<String> {
+	private String var;
+	
+	InfoImpl(String var){
+		this.setInfo(var);
+	}
+	
+	@Override
+	public String getInfo() {
+		return this.var;
+	}
+	
+	@Override
+	public void setInfo(String value) {
+		this.var = value;
+	}
+}
+
+/*interface Comparator<T> {
+	public abstract int compare(T obj1, T obj2);
+}*/
+
+class ReversedStringOrder implements Comparator<String> {
+    @Override
+    public int compare(String s1, String s2) {
+        return -s1.compareTo(s2);
+    }
 }
