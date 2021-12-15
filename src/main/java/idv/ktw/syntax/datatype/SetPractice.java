@@ -1,6 +1,7 @@
 package idv.ktw.syntax.datatype;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class SetPractice {
@@ -26,6 +27,29 @@ class Worker {
 	Worker(String name, String title) {
 		this.name = name;
 		this.title = title;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.name, this.title);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Worker other = (Worker) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.title, other.title)) {
+            return false;
+        }
+        return true;
 	}
 	
 	@Override
