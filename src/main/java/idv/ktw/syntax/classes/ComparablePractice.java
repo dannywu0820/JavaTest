@@ -23,7 +23,7 @@ public class ComparablePractice {
 		people.add(new Person("Danny", "Vu", 2));
 		people.sort(
 			Comparator.nullsFirst(
-				Comparator.<Person, String>comparing(p -> p.getFirstName())
+				Comparator.<Person, String>comparing(Person::getFirstName)
 				.thenComparing(p -> p.getLastName())
 				.thenComparing(p -> p.getZipCode())
 			)
