@@ -14,6 +14,7 @@ public class ComparablePractice {
 		people.add(new Person("Luke", "Ting", 1));
 		Collections.sort(people);
 		Collections.sort(people, new MyComparator());
+		people.sort(new MyComparator());
 		
 		for(Person p: (List<Person>)people) {
 			System.out.println(p);
