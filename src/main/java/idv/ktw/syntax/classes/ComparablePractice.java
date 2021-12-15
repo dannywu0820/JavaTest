@@ -16,6 +16,19 @@ public class ComparablePractice {
 		Collections.sort(people, new MyComparator());
 		people.sort(new MyComparator());
 		
+		people.add(null); // not new Person(null, "Ting", 1)
+		people.sort(Comparator.nullsFirst(new MyComparator().reversed()));
+		
+		people.add(new Person("Danny", "Vu", 3));
+		people.add(new Person("Danny", "Vu", 2));
+		people.sort(
+			Comparator.nullsFirst(
+				Comparator.<Person, String>comparing(p -> p.getFirstName())
+				.thenComparing(p -> p.getLastName())
+				.thenComparing(p -> p.getZipCode())
+			)
+		);
+		
 		for(Person p: (List<Person>)people) {
 			System.out.println(p);
 		}
@@ -31,6 +44,18 @@ class Person implements Comparable<Person> {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.zipCode = zipCode;
+	}
+	
+	public String getFirstName() {
+		return this.firstName;
+	}
+	
+	public String getLastName() {
+		return this.lastName;
+	}
+	
+	public int getZipCode() {
+		return this.zipCode;
 	}
 	
 	@Override
