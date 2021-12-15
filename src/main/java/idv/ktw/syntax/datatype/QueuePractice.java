@@ -1,5 +1,7 @@
 package idv.ktw.syntax.datatype;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -7,6 +9,7 @@ public class QueuePractice {
 	public static void main(String[] args) {
 		demoLinkedList();
 		test();
+		demoStack();
 	}
 	
 	static void test() {
@@ -31,6 +34,16 @@ public class QueuePractice {
         process(requests);
 	}
 	
+	static void demoStack() {
+		Stack<String> stack = new Stack<>(5);
+        stack.push("Justin");
+        stack.push("Monica");
+        stack.push("Irene");
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+        System.out.println(stack.pop());
+	}
+	
 	static void offerRequestTo(Queue<Request> requests) {
 		for (int i = 1; i < 6; i++) {
         	boolean result = requests.offer(
@@ -50,4 +63,36 @@ public class QueuePractice {
 
 interface Request {
 	void execute();
+}
+
+class Stack<E> {
+	private Deque<E> deque = new ArrayDeque();
+	private int capacity;
+	
+	Stack(int capacity) {
+		this.capacity = capacity;
+	}
+	
+	public boolean push(E elem) {
+        if(isFull()) {
+            return false;
+        }
+        return deque.offerLast(elem);
+    }
+
+    private boolean isFull() {
+        return deque.size() + 1 > capacity;
+    }
+    
+    public E pop() {
+        return deque.pollLast();
+    }
+    
+    public E peek() {
+        return deque.peekLast();
+    }
+    
+    public int size() {
+        return deque.size();
+    }
 }
