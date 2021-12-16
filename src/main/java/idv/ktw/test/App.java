@@ -25,7 +25,8 @@ public class App
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
     		
     		Map<String, Object> resultUnmarshall = unmarshall(inputPath);
-    		List<RewardResult> resultCheckReward = checkReward(resultUnmarshall);
+    		Map<String, Object> resultValidate = validate(resultUnmarshall);
+    		List<RewardResult> resultCheckReward = checkReward(resultValidate);
     		marshall(outputPath, resultCheckReward);
     	}
     	catch (IOException e) {
@@ -59,6 +60,20 @@ public class App
 		
 		return result;
     }
+    
+    private static Map<String, Object> validate(Map<String, Object> result) {
+    	List<MyNumber> myNumbers = (List<MyNumber>) result.get("MyNumbers");
+    	List<LotteryNumber> lotteryNumbers = (List<LotteryNumber>) result.get("LotteryNumbers");
+    	
+    	myNumbers.forEach((ele) -> ele.checkNumber());
+    	lotteryNumbers.forEach((ele) -> {
+    		ele.checkNo();
+    		ele.checkNumber();
+    		ele.checkSpecialNumber();
+    	});
+    	
+    	return result;
+    } 
     
     private static List<RewardResult> checkReward(Map<String, Object> result) {
     	List<MyNumber> myNumbers = (List<MyNumber>) result.get("MyNumbers");

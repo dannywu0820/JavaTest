@@ -33,7 +33,7 @@ class MyNumber {
 		return String.format("n: %s", this.number);
 	}
 	
-	private void checkNumber() {
+	public void checkNumber() {
 		int size = this.number.size();
 		if (size != 6) throw new IllegalNumberException(); 
 		
