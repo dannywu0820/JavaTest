@@ -52,9 +52,6 @@ public class App
 			listMyNumbers.add(temp);
 		}
 		
-		App appInstance = new App();
-		if(listMyNumbers.size() != lotteryNumbers.size()) throw appInstance.new IllegalLengthNotMatchException();
-		
 		result.put("MyNumbers", listMyNumbers);
 		result.put("LotteryNumbers", lotteryNumbers);
 		
@@ -81,13 +78,13 @@ public class App
     	List<RewardResult> myRewards = new ArrayList<RewardResult>();
     	 
     	for(int i = 0; i < myNumbers.size(); i++) {
-    		RewardResult temp = checkEachReward(myNumbers.get(i), lotteryNumbers.get(i));
-    		myRewards.add(temp);
+    		for(int j = 0; j < lotteryNumbers.size(); j++) {
+    			RewardResult temp = checkEachReward(myNumbers.get(i), lotteryNumbers.get(j));
+        		myRewards.add(temp);
+    		}
     	}
     	
-    	for(int i = 0; i < myRewards.size(); i++) {
-    		System.out.println(myRewards.get(i));
-    	}
+    	myRewards.forEach(System.out::println);
     	
     	return myRewards;
     }
@@ -117,5 +114,4 @@ public class App
     	objectMapper.writeValue(new File(path), rewards);
     }
     
-    class IllegalLengthNotMatchException extends RuntimeException {}
 }
