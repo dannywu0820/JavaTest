@@ -16,23 +16,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import idv.ktw.syntax.classes.ClassPractice3;
-import idv.ktw.syntax.classes.InterfacePractice;
-
-/**
- * Hello world!
- *
- */
 public class App 
 {
     public static void main( String[] args )
     {   
     	try {
-    		String inputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery.json";
+    		String inputPath = ".\\src\\main\\java\\idv\\ktw\\test\\big_lottery.json";
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
     		
     		Map<String, Object> resultUnmarshall = unmarshall(inputPath);
-    		List<RewardResult> resultCheckReward = checkReward(resultUnmarshall);
+    		Map<String, Object> resultValidate = validate(resultUnmarshall);
+    		List<RewardResult> resultCheckReward = checkReward(resultValidate);
     		marshall(outputPath, resultCheckReward);
     	}
     	catch (IOException e) {
@@ -46,38 +40,37 @@ public class App
     private static Map<String, Object> unmarshall(String path) throws IOException{
     	ObjectMapper objectMapper = new ObjectMapper();
     	
-		JsonNode jsonNode = objectMapper.readValue(new File(path), JsonNode.class);
-		JsonNode myNumbers = jsonNode.get("myNumbers");
-		JsonNode lotteryNumbers = jsonNode.get("lotteryNumbers");
+		BigLottery bigLottery = objectMapper.readValue(new File(path), BigLottery.class);
+		int[][] myNumbers = bigLottery.getMyNumbers();
+		List<LotteryNumber> lotteryNumbers = bigLottery.getLotteryNumbers();
 		
 		List<MyNumber> listMyNumbers = new ArrayList<MyNumber>();
-		List<LotteryNumber> listLotteryNumbers = new ArrayList<LotteryNumber>();
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		if (myNumbers.isArray()) {
-			for(JsonNode n: myNumbers) {
-				MyNumber temp = new MyNumber(n);
-				// System.out.printf("%s: %s%n", temp.number, temp.getClass().getName());
-				listMyNumbers.add(temp);
-			}
+		for(int[] number: myNumbers) {
+			MyNumber temp = new MyNumber(number);
+			listMyNumbers.add(temp);
 		}
-		
-		if (lotteryNumbers.isArray()) {
-			for(JsonNode n: lotteryNumbers) {
-				LotteryNumber temp = new LotteryNumber(n);
-				// System.out.printf("%s%n", temp.toString());
-				listLotteryNumbers.add(temp);
-			}
-		}
-		
-		App appInstance = new App();
-		if(listMyNumbers.size() != listLotteryNumbers.size()) throw appInstance.new IllegalLengthNotMatchException();
 		
 		result.put("MyNumbers", listMyNumbers);
-		result.put("LotteryNumbers", listLotteryNumbers);
+		result.put("LotteryNumbers", lotteryNumbers);
 		
 		return result;
     }
+    
+    private static Map<String, Object> validate(Map<String, Object> result) {
+    	List<MyNumber> myNumbers = (List<MyNumber>) result.get("MyNumbers");
+    	List<LotteryNumber> lotteryNumbers = (List<LotteryNumber>) result.get("LotteryNumbers");
+    	
+    	myNumbers.forEach((ele) -> ele.checkNumber());
+    	lotteryNumbers.forEach((ele) -> {
+    		ele.checkNo();
+    		ele.checkNumber();
+    		ele.checkSpecialNumber();
+    	});
+    	
+    	return result;
+    } 
     
     private static List<RewardResult> checkReward(Map<String, Object> result) {
     	List<MyNumber> myNumbers = (List<MyNumber>) result.get("MyNumbers");
@@ -85,13 +78,13 @@ public class App
     	List<RewardResult> myRewards = new ArrayList<RewardResult>();
     	 
     	for(int i = 0; i < myNumbers.size(); i++) {
-    		RewardResult temp = checkEachReward(myNumbers.get(i), lotteryNumbers.get(i));
-    		myRewards.add(temp);
+    		for(int j = 0; j < lotteryNumbers.size(); j++) {
+    			RewardResult temp = checkEachReward(myNumbers.get(i), lotteryNumbers.get(j));
+        		myRewards.add(temp);
+    		}
     	}
     	
-    	for(int i = 0; i < myRewards.size(); i++) {
-    		System.out.println(myRewards.get(i));
-    	}
+    	myRewards.forEach(System.out::println);
     	
     	return myRewards;
     }
@@ -121,5 +114,4 @@ public class App
     	objectMapper.writeValue(new File(path), rewards);
     }
     
-    class IllegalLengthNotMatchException extends RuntimeException {}
 }

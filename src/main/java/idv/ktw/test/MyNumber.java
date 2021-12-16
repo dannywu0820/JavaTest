@@ -10,13 +10,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 class MyNumber {
 	private List<Integer> number;
 	
-	MyNumber(JsonNode n) {
+	MyNumber(int[] n) {
 		this.number = new ArrayList<Integer>();
-		for(JsonNode ele: n) {
-			this.number.add(ele.asInt());
+		for(int ele: n) {
+			this.number.add(ele);
 		}
-		
-		this.checkNumber();
 	}
 	
 	public List<Integer> getNumber() {
@@ -31,9 +29,16 @@ class MyNumber {
 		return this.number.get(index);
 	}
 	
-	private void checkNumber() {
-		for(int i = 0; i < this.number.size(); i++) {
-			if (this.number.get(i) > 49 || this.number.get(i) < 1) throw new IllegalNumberException(); 
+	public String toString() {
+		return String.format("n: %s", this.number);
+	}
+	
+	public void checkNumber() {
+		int size = this.number.size();
+		if (size != 6) throw new IllegalNumberException(); 
+		
+		for(int i = 0; i < size; i++) {
+			if (this.number.get(i) > 49 || this.number.get(i) < 1) throw new IllegalNumberException();  
 		}
 		
 		Set<Integer> s = new HashSet<Integer>();
