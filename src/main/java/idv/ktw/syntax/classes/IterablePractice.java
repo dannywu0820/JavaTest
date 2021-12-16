@@ -13,6 +13,10 @@ public class IterablePractice {
         forEach(names);
         forEach(new HashSet(names)); 
         forEach(new ArrayDeque(names));
+        
+        // JDK8 provides the default method forEach
+        names.forEach((n) -> System.out.println(n));
+        names.forEach(System.out::println);
 	}
 	
 	public static <E> void forEach(Iterable<E> iterable) {
@@ -26,3 +30,28 @@ public class IterablePractice {
 	}
 
 }
+
+@FunctionalInterface
+interface Comparable<T> {
+	int compareTo(T that);
+	
+	// mixin
+	default boolean lessThan(T that) {
+		return compareTo(that) < 0;
+	}
+}
+
+interface MyComparable<T> extends Comparable<T> {
+	// mark abstract method in parent class for documentation 
+	//abstract int compareTo(T that);
+	
+	// implement abstract method as default method in parent class
+	default int compareTo(T that) {
+		return this.hashCode() - that.hashCode();
+	}
+	
+	// redefine default method in parent class
+	default boolean lessThan(T that) {
+		return compareTo(that) <= 0;
+	}
+} 
