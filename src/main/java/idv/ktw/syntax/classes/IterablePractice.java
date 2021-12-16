@@ -19,6 +19,7 @@ public class IterablePractice {
         names.forEach(System.out::println);
         
         new ChildClass().a();
+        new ChildClass2().a();
 	}
 	
 	public static <E> void forEach(Iterable<E> iterable) {
@@ -70,11 +71,25 @@ interface ParentInterface {
 	}
 }
 
+interface ParentInterface2 {
+	default void a() {
+		System.out.println("a in ParentInterface2");
+	}
+}
+
 class ChildClass extends ParentClass implements ParentInterface{
 	@Override
 	public void a() {
 		ParentInterface.super.a();
 		super.a();
 		System.out.println("a in ChildClass");
+	}
+}
+
+class ChildClass2 implements ParentInterface2, ParentInterface{
+	@Override
+	public void a() {
+		ParentInterface.super.a();
+		ParentInterface2.super.a();
 	}
 }
