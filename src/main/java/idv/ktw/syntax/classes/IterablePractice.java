@@ -17,6 +17,8 @@ public class IterablePractice {
         // JDK8 provides the default method forEach
         names.forEach((n) -> System.out.println(n));
         names.forEach(System.out::println);
+        
+        new ChildClass().a();
 	}
 	
 	public static <E> void forEach(Iterable<E> iterable) {
@@ -54,4 +56,25 @@ interface MyComparable<T> extends Comparable<T> {
 	default boolean lessThan(T that) {
 		return compareTo(that) <= 0;
 	}
-} 
+}
+
+class ParentClass {
+	public void a() {
+		System.out.println("a in ParentClass");
+	}
+}
+
+interface ParentInterface {
+	default void a() {
+		System.out.println("a in ParentInterface");
+	}
+}
+
+class ChildClass extends ParentClass implements ParentInterface{
+	@Override
+	public void a() {
+		ParentInterface.super.a();
+		super.a();
+		System.out.println("a in ChildClass");
+	}
+}
