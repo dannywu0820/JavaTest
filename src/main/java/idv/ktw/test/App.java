@@ -21,7 +21,7 @@ public class App
     public static void main( String[] args )
     {   
     	try {
-    		String inputPath = ".\\src\\main\\java\\idv\\ktw\\test\\big_lottery_invalid.json";
+    		String inputPath = ".\\src\\main\\java\\idv\\ktw\\test\\big_lottery.json";
     		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\big_lottery_result.json";
     		
     		Map<String, Object> resultUnmarshall = unmarshall(inputPath);
@@ -39,33 +39,23 @@ public class App
     private static Map<String, Object> unmarshall(String path) throws IOException{
     	ObjectMapper objectMapper = new ObjectMapper();
     	
-		JsonNode jsonNode = objectMapper.readValue(new File(path), JsonNode.class);
-		JsonNode myNumbers = jsonNode.get("myNumbers");
-		JsonNode lotteryNumbers = jsonNode.get("lotteryNumbers");
+		BigLottery bigLottery = objectMapper.readValue(new File(path), BigLottery.class);
+		int[][] myNumbers = bigLottery.getMyNumbers();
+		List<LotteryNumber> lotteryNumbers = bigLottery.getLotteryNumbers();
 		
 		List<MyNumber> listMyNumbers = new ArrayList<MyNumber>();
-		List<LotteryNumber> listLotteryNumbers = new ArrayList<LotteryNumber>();
 		Map<String, Object> result = new HashMap<String, Object>();
 		
-		if (myNumbers.isArray()) {
-			for(JsonNode n: myNumbers) {
-				MyNumber temp = new MyNumber(n);
-				listMyNumbers.add(temp);
-			}
-		}
-		
-		if (lotteryNumbers.isArray()) {
-			for(JsonNode n: lotteryNumbers) {
-				LotteryNumber temp = new LotteryNumber(n);
-				listLotteryNumbers.add(temp);
-			}
+		for(int[] number: myNumbers) {
+			MyNumber temp = new MyNumber(number);
+			listMyNumbers.add(temp);
 		}
 		
 		App appInstance = new App();
-		if(listMyNumbers.size() != listLotteryNumbers.size()) throw appInstance.new IllegalLengthNotMatchException();
+		if(listMyNumbers.size() != lotteryNumbers.size()) throw appInstance.new IllegalLengthNotMatchException();
 		
 		result.put("MyNumbers", listMyNumbers);
-		result.put("LotteryNumbers", listLotteryNumbers);
+		result.put("LotteryNumbers", lotteryNumbers);
 		
 		return result;
     }

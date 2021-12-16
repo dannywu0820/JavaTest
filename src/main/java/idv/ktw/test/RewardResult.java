@@ -79,6 +79,13 @@ class RewardResult {
 	}
 	
 	public String toString() {
-		return String.format("No: %s, Prize: %s, Money: %d, Numbers: %s", this.no, this.prize.getName(), this.prize.getMoney(), this.numbers.toString());
+		return String.format("CN: %d, CS: %d, No: %s, Prize: %s, Money: %d, Numbers: %s",
+				this.countNormal,
+				this.countSpecial,
+				this.no, 
+				this.prize.getName(), 
+				this.prize.getMoney(), 
+				this.numbers.toString()
+				);
 	}
 }

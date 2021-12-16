@@ -1,6 +1,7 @@
 package idv.ktw.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,22 +16,16 @@ public class LotteryNumber {
 	private List<Integer> number;
 	private int specialNumber;
 	
-	LotteryNumber(JsonNode n) {
-		this.no = n.get("no").asText();
-		JsonNode number = n.get("number");
-		this.number = new ArrayList<Integer>();
-		for(JsonNode ele: number) {
-			this.number.add(ele.asInt());
-		}
-		this.specialNumber = n.get("specialNumber").asInt();
-		
-		this.checkNo();
-		this.checkNumber();
-		this.checkSpecialNumber();
-	}
-	
 	public String getNo() {
 		return this.no;
+	}
+	
+	public List<Integer> getNumber() {
+		return this.number;
+	}
+	
+	public int getSpecialNumber() {
+		return this.specialNumber;
 	}
 	
 	public boolean matches(int value) {
