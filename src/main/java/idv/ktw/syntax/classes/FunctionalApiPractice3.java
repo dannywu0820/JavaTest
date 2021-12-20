@@ -2,6 +2,7 @@ package idv.ktw.syntax.classes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,6 +18,7 @@ public class FunctionalApiPractice3 {
 	
 	public static void main(String[] args) {
 		demoIntermediateOperations();
+		demoTerminalOperations();
 	}
 	
 	static List<StudentClass> createClasses() {
@@ -63,6 +65,19 @@ public class FunctionalApiPractice3 {
 		
 		Stream<String[][]> streamAry3D = Stream.of(ary3D);
 		streamAry3D.flatMap(ele -> Stream.of(ele)).flatMap(ele -> Stream.of(ele)).forEach(System.out::println);
+	}
+	
+	static void demoTerminalOperations() {
+		Stream<String> streamAry1D = Stream.of(ary1D);
+		// streamAry1D.forEach(System.out::println);
+		// Optional<String> result = streamAry1D.reduce((accumulated, ele) -> accumulated + ele);
+		// List<String> result = streamAry1D.collect(Collectors.toList());
+		// long result = streamAry1D.count();
+		// Optional<String> result = streamAry1D.max((s1, s2) -> s1.length() - s2.length());
+		// boolean result = streamAry1D.allMatch(ele -> ele.length() == 3);
+		// boolean result = streamAry1D.anyMatch(ele -> ele.length() == 3);
+		boolean result = streamAry1D.noneMatch(ele -> ele.length() == 3);
+		System.out.println(result);
 	}
 	
 	static void demoMapVsFlatMap() {
