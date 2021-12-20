@@ -107,6 +107,11 @@ class P {
 	public Gender getGender() {
 		return this.gender;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("name: %s, age: %d, gender: %s", this.name, this.age, this.gender);
+	}
 }
 
 enum Gender {
