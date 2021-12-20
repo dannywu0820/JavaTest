@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
- * Stream Pipelining
+ * Stream API(Lazy Evaluation, Pipelining)
  */
 
 public class FunctionalApiPractice3 {
@@ -19,22 +19,19 @@ public class FunctionalApiPractice3 {
 	public static void main(String[] args) {
 		demoIntermediateOperations();
 		demoTerminalOperations();
+		demoWithMoreComplexStructure();
 	}
 	
 	static List<StudentClass> createClasses() {
-		Grade midterm = new Grade(100, 100, 100);
 		List<Grade> grades = new ArrayList<> ();
-		for(int i = 0; i < 2; i++)
-			try {
-				grades.add(midterm.clone());
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		for(int i = 0; i < 2; i++) {
+			grades.add(new Grade(100 - i*10, 100 - i*20, 100 - i*30));
+		}
 		
-		Student s1 = new Student("s1", grades);
 		List<Student> studentsInA = new ArrayList<> ();
-		for(int i = 0; i < 3; i++) studentsInA.add(s1.clone());
+		for(Integer i = 1; i < 3; i++) {
+			studentsInA.add(new Student("s" + i.toString(), grades));
+		}
 		List<Student> studentsInB = studentsInA.stream().map(s -> s.clone()).collect(Collectors.toList());
 		
 		StudentClass classA = new StudentClass("A", studentsInA);
@@ -80,21 +77,25 @@ public class FunctionalApiPractice3 {
 		System.out.println(result);
 	}
 	
-	static void demoMapVsFlatMap() {
+	static void demoWithMoreComplexStructure() {
+		classes.stream()
+		.flatMap(cls -> cls.getStudents().stream())
+		.flatMap(stu -> stu.getGrades().stream())
+		.forEach(System.out::println);
+		
 		List<String> good = new ArrayList<String>();
 		classes.stream().forEach(cls -> {
 			cls.getStudents().stream()
-							.filter(s -> s.getGrades().get(0).getChinese() == 100)
+							.filter(s -> s.getGrades().get(0).getChinese() > 97)
 							.map(Student::getName)
 							.forEach(name -> good.add(name));
 		});
 		System.out.println(good);
 		
-		/*Stream.of(classes)
-			.flatMap(cls -> ((StudentClass) cls).getStudents().stream())
-			.filter(s -> s.getGrades().get(0).getChinese() == 100)
-			.map(Student::getName)
-			.collect(Collectors.toList())
-			.forEach(System.out::println);*/
+		classes.stream()
+				.flatMap(cls -> cls.getStudents().stream())
+				.filter(s -> s.getGrades().get(0).getChinese() > 97)
+				.map(Student::getName)
+				.forEach(System.out::println);
 	}
 }

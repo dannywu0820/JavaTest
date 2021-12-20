@@ -27,5 +27,10 @@ public class Grade implements Cloneable {
     public Grade clone() throws CloneNotSupportedException {
         Grade newGrade = new Grade(this.chinese, this.english, this.math);
         return newGrade;
-    }
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("C: %d, E: %d, M: %d", this.chinese, this.english, this.math);
+	}
 }
