@@ -16,7 +16,8 @@ import java.util.concurrent.TimeoutException;
 
 public class FuturePractice {
 	public static void main(String[] args) {
-		demoGetFuture();
+		//demoGetFuture();
+		demoCancelFuture();
 	}
 	
 	static void demoGetFuture() {
@@ -33,6 +34,33 @@ public class FuturePractice {
 		} 
 		catch(InterruptedException | ExecutionException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	static void demoCancelFuture() {
+		Future<Integer> future = new SquareCalculator().calculateSquare(25);
+		int retryCount = 0;
+		int retryMax = 2;
+		
+		while(retryCount < retryMax) {
+			try {
+				Integer result = future.get(1, TimeUnit.SECONDS);
+				System.out.println(result);
+				break;
+			}
+			catch(InterruptedException | ExecutionException | TimeoutException e) {
+				e.printStackTrace();
+				retryCount += 1;
+				System.out.printf("Retry: %d%n", retryCount);
+			}
+		}
+		
+		future.cancel(true);
+		if(future.isCancelled()) {
+			System.out.println("Future is canceled");
+		}
+		else {
+			System.out.println("Future is done before cancel");
 		}
 	}
 }
