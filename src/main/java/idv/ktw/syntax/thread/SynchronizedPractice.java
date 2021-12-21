@@ -13,7 +13,7 @@ public class SynchronizedPractice {
 		SynchronizedPractice summation = new SynchronizedPractice();
 		
 		try {
-			IntStream.range(0, 1000).forEach(count -> service.submit(summation::calculate));
+			IntStream.range(0, 1000).forEach(count -> service.submit(summation::calculateSync));
 			service.awaitTermination(1000, TimeUnit.MILLISECONDS);
 		}
 		catch (InterruptedException e) {
@@ -25,6 +25,10 @@ public class SynchronizedPractice {
 	}
 	
 	public void calculate() {
+		setSum(getSum() + 1);
+	}
+	
+	public synchronized void calculateSync() {
 		setSum(getSum() + 1);
 	}
 	
