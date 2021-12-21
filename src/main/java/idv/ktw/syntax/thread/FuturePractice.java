@@ -17,7 +17,8 @@ import java.util.concurrent.TimeoutException;
 public class FuturePractice {
 	public static void main(String[] args) {
 		//demoGetFuture();
-		demoCancelFuture();
+		//demoCancelFuture();
+		demoParallel();
 	}
 	
 	static void demoGetFuture() {
@@ -63,16 +64,57 @@ public class FuturePractice {
 			System.out.println("Future is done before cancel");
 		}
 	}
+	
+	static void demoParallel() {
+		SquareCalculator squareCalculator = new SquareCalculator(2);
+
+		Future<Integer> future1 = squareCalculator.calculateSquare(5);
+		Future<Integer> future2 = squareCalculator.calculateSquare(1);
+
+		try {
+			while (!(future1.isDone() && future2.isDone())) {
+			    System.out.println(
+			      String.format(
+			        "future1 is %s and future2 is %s", 
+			        future1.isDone() ? "done" : "not done", 
+			        future2.isDone() ? "done" : "not done"
+			      )
+			    );
+				Thread.sleep(300);	
+			}
+			
+			Integer result1 = future1.get();
+			Integer result2 = future2.get();
+			System.out.println(result1 + " and " + result2);
+			
+			squareCalculator.shutdown();
+		}
+		catch(InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}		
+	}
 }
 
 class SquareCalculator {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 	public static final int SLEEP_SECONDS = 3;
 	
+	SquareCalculator() {
+		
+	}
+
+	SquareCalculator(int numOfThreads) {
+		executor = Executors.newFixedThreadPool(numOfThreads);
+	}
+	
 	public Future<Integer> calculateSquare(Integer value) {
 		return executor.submit(() -> {
-			Thread.sleep(SLEEP_SECONDS * 1000);
+			Thread.sleep(value * 1000);
 			return value * value;
 		});
+	}
+	
+	public void shutdown() {
+		this.executor.shutdown();
 	}
 }
