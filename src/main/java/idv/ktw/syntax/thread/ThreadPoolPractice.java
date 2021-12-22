@@ -1,5 +1,6 @@
 package idv.ktw.syntax.thread;
 
+import java.security.InvalidParameterException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +22,8 @@ public class ThreadPoolPractice {
 	
 	public static void main(String[] args) {
 		demoCreationOfThreadPools();
-		demoExecution();
+		//demoExecution();
+		demoCallable();
 	}
 	
 	static void demoCreationOfThreadPools() {	
@@ -126,5 +128,37 @@ public class ThreadPoolPractice {
 			e.printStackTrace();
 		}
 		future.cancel(true);
+	}
+	
+	static void demoCallable() {
+		FactorialTask task = new FactorialTask(-5);
+	    Future<Integer> future = poolMultiple.submit(task);
+	    try {
+	    	System.out.println(future.isDone());
+			Integer result = future.get().intValue();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+
+class FactorialTask implements Callable<Integer> {
+	private Integer number;
+	
+	FactorialTask(Integer number) {
+		this.number = number;
+	}
+	
+	public Integer call() throws InvalidParameterException {
+		if(number < 0) {
+			throw new InvalidParameterException("Number should be positive");
+		}
+		int answer = 1;
+		for(int i = number; i > 0; i--) {
+			answer *= i;
+		}
+		
+		return answer;
 	}
 }
