@@ -1,13 +1,16 @@
 package idv.ktw.syntax.thread;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class ThreadPoolPractice {
 	static Executor poolSingle;
@@ -104,5 +107,24 @@ public class ThreadPoolPractice {
 		System.out.println(((ThreadPoolExecutor)poolCached).getPoolSize());
 		System.out.println(((ThreadPoolExecutor)poolCached).getQueue().size());
 		// Follow Up: poolScheduled and poolMultiple refer to the same queue?
+		
+		// schedule method allows us to run a task once after a specified delay.
+		// scheduleAtFixedRate method allows us to run a task after a specified initial delay and then run it repeatedly with a certain period. The period argument is the time measured between the starting times of the tasks, so the execution rate is fixed.
+		// scheduleWithFixedDelay method is similar to scheduleAtFixedRate in that it repeatedly runs the given task, but the specified delay is measured between the end of the previous task and the start of the next. The execution rate may vary depending on the time it takes to run any given task.
+		poolScheduled.schedule(x, 1000, TimeUnit.MILLISECONDS);
+		
+		CountDownLatch lock = new CountDownLatch(3);
+		ScheduledFuture<?> future = poolScheduled.scheduleAtFixedRate(() -> {
+			System.out.println("Hello World");
+		    lock.countDown();
+		}, 1000, 2000, TimeUnit.MILLISECONDS);
+		
+		try {
+			lock.await(10 * 1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		future.cancel(true);
 	}
 }
