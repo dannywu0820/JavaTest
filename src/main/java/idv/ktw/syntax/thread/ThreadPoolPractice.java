@@ -15,6 +15,7 @@ public class ThreadPoolPractice {
 	
 	public static void main(String[] args) {
 		demoCreationOfThreadPools();
+		demoExecution();
 	}
 	
 	static void demoCreationOfThreadPools() {	
@@ -52,5 +53,16 @@ public class ThreadPoolPractice {
 	 */
 	static void fromGuava() {
 		
+	}
+	
+	static void demoExecution() {
+		Runnable x = new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Hello World");
+			}	
+		};
+		poolSingle.execute(x);
+		poolSingle.execute(() -> System.out.println("Hello World"));
 	}
 }
