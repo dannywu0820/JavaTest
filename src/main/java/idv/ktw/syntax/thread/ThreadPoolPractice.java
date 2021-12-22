@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ThreadPoolPractice {
 	static Executor poolSingle;
 	static ExecutorService poolMultiple;
-	static ThreadPoolExecutor threadPoolexecutor;
+	static ThreadPoolExecutor threadPoolExecutor;
 	static ThreadPoolExecutor poolCached;
 	static ScheduledExecutorService poolScheduled;
 	
@@ -32,7 +32,7 @@ public class ThreadPoolPractice {
 		// ideal for creating an event loop
 		poolSingle = Executors.newSingleThreadExecutor();
 		poolMultiple = Executors.newFixedThreadPool(2);
-		threadPoolexecutor = (ThreadPoolExecutor) poolMultiple;
+		threadPoolExecutor = (ThreadPoolExecutor) poolMultiple;
 		// corePoolSize = 0, maximumPoolSize = Integer.MAX_VALUE, keepAliveTime = 60 sec
 		poolCached = (ThreadPoolExecutor) Executors.newCachedThreadPool(); 
 		poolScheduled = Executors.newScheduledThreadPool(5);
@@ -83,5 +83,26 @@ public class ThreadPoolPractice {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		for(int i = 0; i < 3; i++) {
+			threadPoolExecutor.submit(() -> {
+				Thread.sleep(1000);
+				return null;
+			});
+		}
+		
+		System.out.println(threadPoolExecutor.getPoolSize());
+		System.out.println(threadPoolExecutor.getQueue().size());
+		
+		for(int i = 0; i < 3; i++) {
+			poolCached.submit(() -> {
+				Thread.sleep(1000);
+				return null;
+			});
+		}
+		
+		System.out.println(((ThreadPoolExecutor)poolCached).getPoolSize());
+		System.out.println(((ThreadPoolExecutor)poolCached).getQueue().size());
+		// Follow Up: poolScheduled and poolMultiple refer to the same queue?
 	}
 }
