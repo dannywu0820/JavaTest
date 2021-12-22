@@ -1,8 +1,11 @@
 package idv.ktw.syntax.thread;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -64,5 +67,21 @@ public class ThreadPoolPractice {
 		};
 		poolSingle.execute(x);
 		poolSingle.execute(() -> System.out.println("Hello World"));
+		
+		Callable<String> y = new Callable() {
+			@Override
+			public String call() throws Exception {
+				return "Hello World";
+			}
+			
+		};
+		Future<String> taskResult = poolMultiple.submit(y);
+		poolMultiple.submit(x);
+		try {
+			System.out.println(taskResult.get());
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
