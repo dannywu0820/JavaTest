@@ -1,16 +1,17 @@
 package idv.ktw.syntax.thread;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SleepWaitNotifyPractice {
 	public static void main(String[] args) throws InterruptedException {				
 		try {
 			SharedResource data = new SharedResource();
-			Thread t1 = new Thread(new Sender(data));
-			Thread t2 = new Thread(new Receiver(data));
+			Sender s = new Sender(data);
+			Receiver r = new Receiver(data);
 			
-			t1.start();
-			t2.start();
+			s.start();
+			r.start();
 		}
 		catch(Exception e) {
 			System.out.println(e.getMessage());
@@ -70,14 +71,18 @@ class SharedResource {
 }
 
 class Sender implements Runnable {
+	private Thread worker;
 	private SharedResource data;
 
 	Sender(SharedResource data) {
 		this.data = data;
+		this.worker = new Thread(this);
+		System.out.println("[" + this.getClass().getName() + "] Thread Created");
 	}
 	
 	@Override
 	public void run() {
+		System.out.println("[" + this.getClass().getName() + "] Before Run");
 		String[] packets = {
 			"First packet",
 			"Second packet",
@@ -85,31 +90,45 @@ class Sender implements Runnable {
 			"Fourth packet",
 			"End"	
 		};
+		AtomicInteger count = new AtomicInteger(0);
 		
-		for(String packet: packets) {
-			data.send(packet);
+		while(count.get() < 5) {
+		//for(String packet: packets) {
+			data.send(packets[count.get()]);
 			try {
+				count.getAndAdd(1);
 				Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 3000));
 			}
 			catch(InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
 		}
-	}	
+		System.out.println("[" + this.getClass().getName() + "] After Run");
+	}
+	
+	public void start() {
+		System.out.println("[" + this.getClass().getName() + "] Before Start");
+		this.worker.start();
+		System.out.println("[" + this.getClass().getName() + "] After Start");
+	}
 }
 
 class Receiver implements Runnable {
+	private Thread worker;
     private SharedResource load;
  
     Receiver(SharedResource data) {
 		this.load = data;
+		this.worker = new Thread(this);
+		System.out.println("[" + this.getClass().getName() + "] Thread Created");
 	}
     
     @Override
     public void run() {
+    	System.out.println("[" + this.getClass().getName() + "] Before Run");
         for(String receivedMessage = load.receive(); !"End".equals(receivedMessage); receivedMessage = load.receive()) {
             
-            System.out.println(receivedMessage);
+            System.out.println("[" + this.getClass().getName() + "] Receive: " + receivedMessage);
 
             try {
                 Thread.sleep(ThreadLocalRandom.current().nextInt(3000, 5000));
@@ -117,5 +136,12 @@ class Receiver implements Runnable {
                 Thread.currentThread().interrupt();  
             }
         }
+        System.out.println("[" + this.getClass().getName() + "] After Run");
+    }
+    
+    public void start() {
+    	System.out.println("[" + this.getClass().getName() + "] Before Start");
+		this.worker.start();
+		System.out.println("[" + this.getClass().getName() + "] After Start");
     }
 }
