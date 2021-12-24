@@ -5,6 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SleepWaitNotifyPractice {
 	public static void main(String[] args) throws InterruptedException {				
+		demoJoin();
+	}
+	
+	static void demoSenderReceiver() {
 		try {
 			SharedResource data = new SharedResource();
 			Sender s = new Sender(data);
@@ -32,6 +36,37 @@ public class SleepWaitNotifyPractice {
 			LOCK.wait(2 * 1000);
 			System.out.println("Object '" + LOCK + "' is woken");
 		}
+	}
+	
+	static void demoJoin() {
+		try {
+			AtomicInteger count = new AtomicInteger(3);
+			JoinExample example = new JoinExample(count);
+			Thread t = new Thread(example);
+			
+			System.out.println("[1st Join] return immediately since it hasn't started");
+			t.join();
+			
+			t.start();
+			System.out.println("[2nd Join] invoke");
+			t.join();
+			System.out.println("[2nd Join] done");
+			
+			System.out.println("[3rd Join] return immediately since it has become terminated");
+			t.join();
+			
+			count.set(6);
+			example = new JoinExample(count);
+			t = new Thread(example);
+			t.start();
+			System.out.println("[4th Join] invoke");
+			t.join();
+			System.out.println("[4th Join] done");
+		}
+		catch(InterruptedException e) {
+			System.out.println("catched in demJoin()");
+		}
+		
 	}
 }
 
@@ -151,4 +186,28 @@ class Receiver implements Runnable {
 		this.worker.start();
 		System.out.println("[" + this.getClass().getName() + "] After Start");
     }
+}
+
+class JoinExample implements Runnable {
+	private AtomicInteger count;
+	
+	JoinExample(AtomicInteger count) {
+		this.count = count;
+	}
+	
+	@Override
+	public void run() {
+		try {
+			while(count.get() > 0) {
+				System.out.println("Count: " + count);
+				if(count.get() > 5) Thread.currentThread().interrupt();
+				Thread.sleep(1000);
+				count.getAndDecrement();
+			}
+		}
+		catch(InterruptedException e) {
+			System.out.println("[" + this.getClass().getName() + "] InterruptedException catched");
+		}
+	}
+	
 }
