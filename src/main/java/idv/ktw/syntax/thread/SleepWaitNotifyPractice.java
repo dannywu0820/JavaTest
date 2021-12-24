@@ -37,6 +37,7 @@ public class SleepWaitNotifyPractice {
 
 class SharedResource {
 	private String packet;
+	// Follow Up: is it more thread-safe to use AtomicBoolean? 
 	private boolean transfer = true;
 	
 	public synchronized void send(String packet) {
@@ -93,13 +94,14 @@ class Sender implements Runnable {
 		AtomicInteger count = new AtomicInteger(0);
 		
 		while(count.get() < 5) {
-		//for(String packet: packets) {
 			data.send(packets[count.get()]);
 			try {
 				count.getAndAdd(1);
+				if(count.get() == 3) this.interrupt();
 				Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 3000));
 			}
 			catch(InterruptedException e) {
+				System.out.println("[" + this.getClass().getName() + "] InterruptedException catched");
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -110,6 +112,11 @@ class Sender implements Runnable {
 		System.out.println("[" + this.getClass().getName() + "] Before Start");
 		this.worker.start();
 		System.out.println("[" + this.getClass().getName() + "] After Start");
+	}
+	
+	public void interrupt() {
+		System.out.println("[" + this.getClass().getName() + "] this.interrupt() triggered");
+		worker.interrupt();
 	}
 }
 
@@ -131,7 +138,7 @@ class Receiver implements Runnable {
             System.out.println("[" + this.getClass().getName() + "] Receive: " + receivedMessage);
 
             try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(3000, 5000));
+                Thread.sleep(ThreadLocalRandom.current().nextInt(1000, 3000));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();  
             }
