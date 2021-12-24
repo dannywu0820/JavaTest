@@ -63,7 +63,7 @@ class SharedResource {
 				Thread.currentThread().interrupt();
 			}
 		}
-		transfer = false;
+		transfer = true;
 		
 		notifyAll();
 		return packet;
