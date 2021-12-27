@@ -20,9 +20,9 @@ import java.util.stream.Stream;
 
 public class ThreadPractice {
 	public static final int NUM_OF_THREADS = 10;
-	//public static Map<Integer, Integer> hashTableGlobal = new HashMap<>();
+	public static Map<Integer, Integer> hashTableGlobal = new HashMap<>();
 	//public static Map<Integer, Integer> hashTableGlobal = Collections.synchronizedMap(new HashMap<>());
-	public static Map<Integer, Integer> hashTableGlobal = new ConcurrentHashMap<>();
+	//public static Map<Integer, Integer> hashTableGlobal = new ConcurrentHashMap<>();
 	public static String absolutePath = "C:\\Users\\Danny_Wu.PFT\\eclipse-workspace\\test\\src\\main\\java\\idv\\ktw\\thread\\ProgExam\\";
 	public static String filePrefix = "data";
 	public static String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer_thread";
@@ -77,15 +77,15 @@ public class ThreadPractice {
 class Task implements Runnable {
 	private Thread worker;
 	private Path path;
-	//private ThreadLocal<Map<Integer, Integer>> hashTableLocal;
+	private ThreadLocal<Map<Integer, Integer>> hashTableLocal;
 
 	Task(int i) {
 		this.worker = new Thread(this);
 		this.path = Paths.get(ThreadPractice.absolutePath + ThreadPractice.filePrefix + i);
-		/*this.hashTableLocal = ThreadLocal.withInitial(() -> {
+		this.hashTableLocal = ThreadLocal.withInitial(() -> {
 			Map<Integer, Integer> m = new HashMap<>();
 			return m;
-		});*/
+		});
 		System.out.println("[" + this.getClass().getName() + "] Thread Created");
 	}
 	
@@ -96,22 +96,22 @@ class Task implements Runnable {
 				String[] tokens = line.split(",");
 				Integer key = new Integer(tokens[0]);
 				Integer value = new Integer(tokens[1]);
-				ThreadPractice.hashTableGlobal.putIfAbsent(key, 0);
-				ThreadPractice.hashTableGlobal.put(key, ThreadPractice.hashTableGlobal.get(key) + value);
-				/*Map<Integer, Integer> m = this.hashTableLocal.get();
+				/*ThreadPractice.hashTableGlobal.putIfAbsent(key, 0);
+				ThreadPractice.hashTableGlobal.put(key, ThreadPractice.hashTableGlobal.get(key) + value);*/
+				Map<Integer, Integer> m = this.hashTableLocal.get();
 				m.putIfAbsent(key, 0);
-				m.put(key, m.get(key) + value);*/
+				m.put(key, m.get(key) + value);
 			});
 		}
 		catch(IOException e) {
 			e.printStackTrace();
 		}
 		
-		/*synchronized(ThreadPractice.hashTableGlobal) {
+		synchronized(ThreadPractice.hashTableGlobal) {
 			this.hashTableLocal.get().forEach((k,v) -> {
 				ThreadPractice.hashTableGlobal.merge(k, v, (oldValue, newValue) -> oldValue + newValue);
 			});
-		}*/
+		}
 	}
 	
 	public void start() {
