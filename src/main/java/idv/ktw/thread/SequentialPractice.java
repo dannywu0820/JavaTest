@@ -18,10 +18,12 @@ public class SequentialPractice {
 		String absolutePath = "C:\\Users\\Danny_Wu.PFT\\eclipse-workspace\\test\\src\\main\\java\\idv\\ktw\\thread\\ProgExam\\";
 		//String absolutePath = "C:\\Users\\Danny_Wu.PFT\\Downloads\\ProgExam\\";
 		String filePrefix = "data";
-		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer";
+		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer_sequential";
 		
 		Map<Integer, Integer> hashTable=  new HashMap<>();
 		try {
+			long start = System.currentTimeMillis();
+			
 			for(int i = 0; i < 10; i++) {
 				try(Stream<String> lines = Files.lines(Paths.get(absolutePath + filePrefix + i))) {
 					lines.forEach(line -> {
@@ -38,7 +40,6 @@ public class SequentialPractice {
 														.stream()
 														.sorted(Map.Entry.<Integer, Integer>comparingByKey())
 														.collect(Collectors.toList());
-
 			l.forEach(System.out::println);
 			
 			File file = new File(outputPath);
@@ -48,7 +49,10 @@ public class SequentialPractice {
                bf.write(entry.getKey() + "=" + entry.getValue());
                bf.newLine();
 			}
-			bf.flush();	
+			bf.flush();
+			
+			long time = System.currentTimeMillis() - start;
+			System.out.println("[" + Thread.currentThread().getName() + "] Elapsed Time: " + time);
 		} 
 		catch(IOException e) {
 			// TODO Auto-generated catch block
