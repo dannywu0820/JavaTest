@@ -20,8 +20,16 @@ public class ParallelStreamPractice {
 			filePaths.add(absolutePath + filePrefix + i);
 		}
 		
-		filePaths.stream()
-			.map(Paths::get)
+		filePaths.parallelStream()
+			.map(f -> {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return Paths.get(f);
+			})
 			.flatMap(ThrowingFunction.wrap(Files::lines))
 			.map(str -> str.split(","))
 			.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2))
