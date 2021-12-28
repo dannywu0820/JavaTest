@@ -1,5 +1,8 @@
 package idv.ktw.thread;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -8,11 +11,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ParallelStreamPractice {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		long start = System.currentTimeMillis();
 		
 		String absolutePath = "C:\\Users\\Danny_Wu.PFT\\Downloads\\ProgExam\\";
 		String filePrefix = "data";
+		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer_parallelStream";
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));
 		int numOfThreads = 10;
 		List<String> filePaths = new ArrayList<>();
 		
@@ -33,10 +38,20 @@ public class ParallelStreamPractice {
 			.flatMap(ThrowingFunction.wrap(Files::lines))
 			.map(str -> str.split(","))
 			.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2))
-			.forEach((k,v) -> System.out.printf("%d=%d%n", k, v));
+			.entrySet().stream()
+			.map(e -> e.getKey() + "=" + e.getValue())
+			.forEach(str -> {
+				try {
+					writer.write(str + "\r\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
 		
 		long time = System.currentTimeMillis() - start;
 		System.out.println("Time: " + time);
+		writer.close();		
 	}
 }
 
