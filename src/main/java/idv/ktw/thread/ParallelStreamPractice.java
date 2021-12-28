@@ -33,7 +33,7 @@ public class ParallelStreamPractice {
 		for(int i = 0; i < 10; i++) {
 			Path path = Paths.get(absolutePath + filePrefix + i);
 			try(Stream<String> lines = Files.lines(path)) {
-				List<String[]> a = lines.map(str -> str.split(",")).collect(Collectors.toList());
+				List<String[]> a = lines.parallel().map(str -> str.split(",")).collect(Collectors.toList());
 				streams.add(a);
 			}
 		}		
@@ -42,9 +42,9 @@ public class ParallelStreamPractice {
 	}
 	
 	static Map<Integer, Integer> process(List<List<String[]>> s) {
-		Map<Integer, Integer> m = (Map<Integer, Integer>)s.stream()
-			.flatMap(ele -> ele.stream())
-			.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1+v2));
+		Map<Integer, Integer> m = (Map<Integer, Integer>)s.parallelStream()
+			.flatMap(ele -> ele.parallelStream())
+			.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2));
 		
 		return m;
 	}
