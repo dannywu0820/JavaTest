@@ -1,5 +1,8 @@
 package idv.ktw.thread;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,7 +71,7 @@ class TaskCalc implements Callable<Map> {
 			.map(str -> str.split(","))
 			.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2));
 		
-		Thread.sleep(1000);
+		//Thread.sleep(1000);
 		
 		return result;
 	}
@@ -105,15 +108,31 @@ class MyService {
 	
 	public void reduce() {
 		try {
+			String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer_guava";
+			BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));
+			
 			List<Object> l = Futures.allAsList(this.futures).get();
 			l.stream()
 	        .flatMap(m -> ((Map<Integer, Integer>) m).entrySet().stream())
 	        .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)))
-	        .forEach((k,v) -> System.out.printf("%d=%d%n", k, v));
+	        .entrySet().stream()
+			.map(e -> e.getKey() + "=" + e.getValue())
+			.forEach(str -> {
+				try {
+					writer.write(str + "\r\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
+			writer.close();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
