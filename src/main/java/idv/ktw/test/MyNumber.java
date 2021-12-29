@@ -48,6 +48,6 @@ class MyNumber {
 		}
 	}
 	
-	class IllegalNumberException extends RuntimeException {}
-	class IllegalDuplicateException extends RuntimeException{}
+	public static class IllegalNumberException extends RuntimeException {}
+	public static class IllegalDuplicateException extends RuntimeException{}
 }
