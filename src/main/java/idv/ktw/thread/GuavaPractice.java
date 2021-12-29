@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,14 +31,22 @@ public class GuavaPractice {
 		Stopwatch timer = Stopwatch.createStarted(); 
 		String absolutePath = "C:\\Users\\Danny_Wu.PFT\\eclipse-workspace\\test\\src\\main\\java\\idv\\ktw\\thread\\ProgExam\\";
 		String filePrefix = "data";
-		MyService s = new MyService(10);
+		MyService s = new MyService(4);
+		CountDownLatch count = new CountDownLatch(10);
 		for(int i = 0; i < 10; i++) {
-			Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i));
+			//Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i));
+			Callable<?> t = new TaskTest(Integer.toString(i), count);
 			s.start(t);
 		}
-		s.reduce();
+		//s.reduce();
+		try {
+			count.await();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		timer.stop();
-		System.out.println("Total Elapsed Time: " + timer);
+		System.out.println("[" + Thread.currentThread().getName() + "] Total Elapsed Time: " + timer);
 	}
 }
 
@@ -58,9 +67,11 @@ abstract class TaskTimed<T> implements Callable<T> {
 
 class TaskTest<String> extends TaskTimed<String> {
 	private String data;
+	private CountDownLatch count;
 	
-	TaskTest(String data) {
+	TaskTest(String data, CountDownLatch count) {
 		this.data = data;
+		this.count = count;
 	}
 
 	@Override
@@ -73,6 +84,9 @@ class TaskTest<String> extends TaskTimed<String> {
 		catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally {
+			this.count.countDown();
 		}
 		return this.data;
 	}
@@ -111,7 +125,7 @@ class MyService {
 		@Override
 		public void onSuccess(@Nullable Object result) {
 			System.out.println("[" + Thread.currentThread().getName() + "] onSuccess");
-			((Map) result).forEach((k,v) -> System.out.printf("%d=%d%n", k, v));
+			//((Map) result).forEach((k,v) -> System.out.printf("%d=%d%n", k, v));
 		}
 
 		@Override
