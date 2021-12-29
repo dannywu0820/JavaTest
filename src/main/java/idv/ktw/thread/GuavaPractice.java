@@ -31,13 +31,19 @@ public class GuavaPractice {
 		Stopwatch timer = Stopwatch.createStarted(); 
 		String absolutePath = "C:\\Users\\Danny_Wu.PFT\\eclipse-workspace\\test\\src\\main\\java\\idv\\ktw\\thread\\ProgExam\\";
 		String filePrefix = "data";
-		MyService s = new MyService(2);
-		CountDownLatch count = new CountDownLatch(10);
-		for(int i = 0; i < 10; i++) {
+		String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer_guava";
+		int numOfThreads = 2;
+		MyService s = new MyService(numOfThreads);
+		int numOfFiles = 10;
+		CountDownLatch count = new CountDownLatch(numOfFiles);
+		
+		for(int i = 0; i < numOfFiles; i++) {
 			Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i), count);
 			s.start(t);
 		}
-		s.reduce();
+		Map<Integer, Integer> resultReduce = s.reduce();
+		s.write(outputPath, resultReduce);
+		
 		try {
 			count.await();
 		} catch (InterruptedException e) {
@@ -150,33 +156,41 @@ class MyService {
 		this.futures.add(temp);
 	}
 	
-	public void reduce() {
+	public Map<Integer, Integer> reduce() {
+		Map<Integer, Integer> aggregated = null;
 		try {
-			String outputPath = "C:\\Users\\Danny_Wu.PFT\\Desktop\\answer_guava";
-			BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));
-			
 			List<Object> l = Futures.allAsList(this.futures).get();
-			l.stream()
+			aggregated = l.stream()
 	        .flatMap(m -> ((Map<Integer, Integer>) m).entrySet().stream())
-	        .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)))
-	        .entrySet().stream()
-			.map(e -> e.getKey() + "=" + e.getValue())
-			.forEach(str -> {
-				try {
-					writer.write(str + "\r\n");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			});
-			writer.close();
-		} catch (InterruptedException e) {
+	        .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));    
+		} 
+		catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} 
+		catch (ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		}
+		
+		return aggregated;
+	}
+	
+	public void write(String path, Map<Integer, Integer> result) {
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+			result.entrySet().stream()
+				.map(e -> e.getKey() + "=" + e.getValue())
+				.forEach(str -> {
+					try {
+						writer.write(str + "\r\n");
+					} 
+					catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
