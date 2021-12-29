@@ -31,14 +31,13 @@ public class GuavaPractice {
 		Stopwatch timer = Stopwatch.createStarted(); 
 		String absolutePath = "C:\\Users\\Danny_Wu.PFT\\eclipse-workspace\\test\\src\\main\\java\\idv\\ktw\\thread\\ProgExam\\";
 		String filePrefix = "data";
-		MyService s = new MyService(4);
+		MyService s = new MyService(2);
 		CountDownLatch count = new CountDownLatch(10);
 		for(int i = 0; i < 10; i++) {
-			//Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i));
-			Callable<?> t = new TaskTest(Integer.toString(i), count);
+			Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i), count);
 			s.start(t);
 		}
-		//s.reduce();
+		s.reduce();
 		try {
 			count.await();
 		} catch (InterruptedException e) {
@@ -94,9 +93,11 @@ class TaskTest<String> extends TaskTimed<String> {
 
 class TaskCalc<Map> extends TaskTimed<Map> {
 	private Path filePath;
+	private CountDownLatch count;
 	
-	TaskCalc(String path) {
+	TaskCalc(String path, CountDownLatch count) {
 		filePath = Paths.get(path);
+		this.count = count;
 	}
 
 	@Override
@@ -106,12 +107,14 @@ class TaskCalc<Map> extends TaskTimed<Map> {
 			result = (Map) Files.lines(this.filePath)
 				.map(str -> str.split(","))
 				.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2));
+			//Thread.sleep(1000);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//Thread.sleep(1000);
+		finally {
+			this.count.countDown();
+		}
 		
 		return result;
 	}
