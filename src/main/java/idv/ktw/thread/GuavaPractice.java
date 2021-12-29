@@ -11,15 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -28,50 +28,93 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 public class GuavaPractice {
 	public static void main(String[] args) {
-		long start = System.currentTimeMillis();
+		Stopwatch timer = Stopwatch.createStarted(); 
 		String absolutePath = "C:\\Users\\Danny_Wu.PFT\\eclipse-workspace\\test\\src\\main\\java\\idv\\ktw\\thread\\ProgExam\\";
 		String filePrefix = "data";
-		MyService s = new MyService(10);
+		MyService s = new MyService(2);
+		CountDownLatch count = new CountDownLatch(10);
 		for(int i = 0; i < 10; i++) {
-			Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i));
+			Callable<?> t = new TaskCalc(absolutePath + filePrefix + Integer.toString(i), count);
 			s.start(t);
 		}
 		s.reduce();
-		long time = System.currentTimeMillis() - start;
-		System.out.println("Time: " + time);
+		try {
+			count.await();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		timer.stop();
+		System.out.println("[" + Thread.currentThread().getName() + "] Total Elapsed Time: " + timer);
 	}
 }
 
-class TaskTest implements Callable<String> {
-	private String data;
+abstract class TaskTimed<T> implements Callable<T> {
+	private Stopwatch timer;
+
+	abstract protected T execute();
 	
-	TaskTest(String data) {
+	@Override
+	public T call() {
+		timer = Stopwatch.createStarted();
+		T result = this.execute();
+		timer.stop();
+		System.out.println("[" + Thread.currentThread().getName() + "] Elapsed Time: " + timer);
+		return result;
+	}  
+}
+
+class TaskTest<String> extends TaskTimed<String> {
+	private String data;
+	private CountDownLatch count;
+	
+	TaskTest(String data, CountDownLatch count) {
 		this.data = data;
+		this.count = count;
 	}
 
 	@Override
-	public String call() throws Exception { 
-		int seconds = ThreadLocalRandom.current().nextInt(1, 5);
-		Thread.sleep(seconds * 1000);
-		System.out.println(Thread.currentThread().getName() + " sleep for " + seconds + " seconds");
+	public String execute() { 
+		try {
+			int seconds = ThreadLocalRandom.current().nextInt(1, 5);
+			Thread.sleep(seconds * 1000);
+			System.out.println(Thread.currentThread().getName() + " sleep for " + seconds + " seconds");
+		}
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			this.count.countDown();
+		}
 		return this.data;
 	}
 }
 
-class TaskCalc implements Callable<Map> {
+class TaskCalc<Map> extends TaskTimed<Map> {
 	private Path filePath;
+	private CountDownLatch count;
 	
-	TaskCalc(String path) {
+	TaskCalc(String path, CountDownLatch count) {
 		filePath = Paths.get(path);
+		this.count = count;
 	}
 
 	@Override
-	public Map call() throws Exception {
-		Map<Integer, Integer> result = Files.lines(this.filePath)
-			.map(str -> str.split(","))
-			.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2));
-		
-		//Thread.sleep(1000);
+	public Map execute() {
+		Map result = (Map) new HashMap<Integer, Integer>();
+		try {
+			result = (Map) Files.lines(this.filePath)
+				.map(str -> str.split(","))
+				.collect(Collectors.toMap(ele -> Integer.valueOf(ele[0]), ele -> Integer.valueOf(ele[1]), (v1,v2) -> v1 + v2));
+			//Thread.sleep(1000);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			this.count.countDown();
+		}
 		
 		return result;
 	}
@@ -84,12 +127,13 @@ class MyService {
 	private FutureCallback<Object> myCallback = new FutureCallback() {
 		@Override
 		public void onSuccess(@Nullable Object result) {
-			System.out.println(Thread.currentThread().getName());
-			((Map) result).forEach((k,v) -> System.out.printf("%d=%d%n", k, v));
+			System.out.println("[" + Thread.currentThread().getName() + "] onSuccess");
+			//((Map) result).forEach((k,v) -> System.out.printf("%d=%d%n", k, v));
 		}
 
 		@Override
 		public void onFailure(Throwable t) {
+			System.out.println("[" + Thread.currentThread().getName() + "] onFailure");
 			t.printStackTrace();			
 		}
 	};
