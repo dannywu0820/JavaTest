@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MyNumberTest {
-	private MyNumber n = null;
+	private MyNumber n;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -45,8 +45,7 @@ public class MyNumberTest {
 	
 	@Test
 	public void testWhenSizeIsNot6() {
-		int[] ary = {1,2,3,4};
-		n = new MyNumber(ary);
+		n = MyNumberFactory.createMyNumberWithWrongSize();
 		
 		Throwable thrown = catchThrowable(() -> n.checkNumber());
 		
@@ -55,21 +54,44 @@ public class MyNumberTest {
 
 	@Test
 	public void testWhenElementIsOutOfRange() {
-		int[] ary = {1,1,1,1,1,51};
-		n = new MyNumber(ary);
+		n = MyNumberFactory.createMyNumberWithOutOfRangeElements();
 		
-Throwable thrown = catchThrowable(() -> n.checkNumber());
+		Throwable thrown = catchThrowable(() -> n.checkNumber());
 		
 		assertThat(thrown).isInstanceOf(MyNumber.IllegalNumberException.class);
 	}
 	
 	@Test
 	public void testWhenDuplicatedElements() {
-		int[] ary = {1,2,3,4,5,5};
-		n = new MyNumber(ary);
+		n = MyNumberFactory.createMyNumberWithDuplicatedElements();
 		
 		Throwable thrown = catchThrowable(() -> n.checkNumber());
 		
 		assertThat(thrown).isInstanceOf(MyNumber.IllegalDuplicateException.class);
+	}
+}
+
+final class MyNumberFactory {
+	private MyNumberFactory() {};
+	
+	public static MyNumber createMyNumberWithWrongSize() {
+		int[] ary = {1,2,3,4};
+		MyNumber n = new MyNumber(ary);
+		
+		return n;
+	}
+	
+	public static MyNumber createMyNumberWithOutOfRangeElements() {
+		int[] ary = {1,1,1,1,1,51};
+		MyNumber n = new MyNumber(ary);
+		
+		return n;
+	}
+	
+	public static MyNumber createMyNumberWithDuplicatedElements() {
+		int[] ary = {1,2,3,4,5,5};
+		MyNumber n = new MyNumber(ary);
+		
+		return n;
 	}
 }
