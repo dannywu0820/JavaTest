@@ -20,12 +20,24 @@ public class LotteryNumber {
 		return this.no;
 	}
 	
+	public void setNo(String no) {
+		this.no = no;
+	}
+	
 	public List<Integer> getNumber() {
 		return this.number;
 	}
 	
+	public void setNumber(List<Integer> number) {
+		this.number = number;
+	}
+	
 	public int getSpecialNumber() {
 		return this.specialNumber;
+	}
+	
+	public void setSpecialNumber(int specialNumber) {
+		this.specialNumber = specialNumber;
 	}
 	
 	public boolean matches(int value) {
@@ -64,8 +76,8 @@ public class LotteryNumber {
 		if (this.number.contains(this.specialNumber)) throw new IllegalDuplicateException();
 	}
 	
-	class IllegalNoException extends RuntimeException {}
-	class IllegalNumberException extends RuntimeException {}
-	class IllegalSpecialNumberException extends RuntimeException {}
-	class IllegalDuplicateException extends RuntimeException{}
+	public static class IllegalNoException extends RuntimeException {}
+	public static class IllegalNumberException extends RuntimeException {}
+	public static class IllegalSpecialNumberException extends RuntimeException {}
+	public static class IllegalDuplicateException extends RuntimeException{}
 }
