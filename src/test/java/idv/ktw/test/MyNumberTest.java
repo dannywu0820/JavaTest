@@ -1,19 +1,15 @@
 package idv.ktw.test;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class MyNumberTest {
 	private MyNumber n = null;
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 	
 	@BeforeClass
 	public static void setUpBeforeClass() {
@@ -37,13 +33,24 @@ public class MyNumberTest {
 	}	
 	
 	@Test
+	public void testSizeShouldReturn6() {
+		int[] ary = {1,2,3,4,5,6};
+		n = new MyNumber(ary);
+		
+		int actual = n.size();
+		int expected = 6;
+		
+		assertThat(actual).isEqualTo(expected);
+	}
+	
+	@Test
 	public void testWhenSizeIsNot6() {
 		int[] ary = {1,2,3,4};
 		n = new MyNumber(ary);
 		
-		thrown.expect(MyNumber.IllegalNumberException.class);
+		Throwable thrown = catchThrowable(() -> n.checkNumber());
 		
-		n.checkNumber();
+		assertThat(thrown).isInstanceOf(MyNumber.IllegalNumberException.class);
 	}
 
 	@Test
@@ -51,9 +58,9 @@ public class MyNumberTest {
 		int[] ary = {1,1,1,1,1,51};
 		n = new MyNumber(ary);
 		
-		thrown.expect(MyNumber.IllegalNumberException.class);
+Throwable thrown = catchThrowable(() -> n.checkNumber());
 		
-		n.checkNumber();
+		assertThat(thrown).isInstanceOf(MyNumber.IllegalNumberException.class);
 	}
 	
 	@Test
@@ -61,8 +68,8 @@ public class MyNumberTest {
 		int[] ary = {1,2,3,4,5,5};
 		n = new MyNumber(ary);
 		
-		thrown.expect(MyNumber.IllegalDuplicateException.class);
+		Throwable thrown = catchThrowable(() -> n.checkNumber());
 		
-		n.checkNumber();
+		assertThat(thrown).isInstanceOf(MyNumber.IllegalDuplicateException.class);
 	}
 }
